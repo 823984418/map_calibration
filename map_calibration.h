@@ -16,6 +16,11 @@ extern "C" {
 
 #define MAP_CALIBRATION_MIN_COUNT   8
 
+typedef struct map_calibration_point {
+    float32_2_t sensor_coord;
+    float32_2_t world_coord;
+} map_calibration_point_t;
+
 /// 地图校正对象
 typedef struct map_calibration {
     /// 角度误差
@@ -26,7 +31,7 @@ typedef struct map_calibration {
     /// 校准点在世界坐标空间中的重心
     float32_2_t world_center;
     /// 用于储存校准点的缓冲区
-    void *buffer;
+    map_calibration_point_t *buffer;
     /// 可以储存校准点的最大数量
     size_t buffer_size;
     /// 当前储存了的校准点数量

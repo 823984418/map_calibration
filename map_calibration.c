@@ -12,16 +12,11 @@
 #define max(a, b) (((a) > (b)) ? (a) : (b))
 #define min(a, b) (((a) < (b)) ? (a) : (b))
 
-typedef struct map_calibration_point {
-    float32_2_t sensor_coord;
-    float32_2_t world_coord;
-} map_calibration_point_t;
-
 bool map_calibration_init(map_calibration_t *self, size_t buffer_size) {
     self->rotation = 0;
     self->sensor_center = (float32_2_t) {0, 0};
     self->world_center = (float32_2_t) {0, 0};
-    self->buffer_size = 0;
+    self->buffer_size = buffer_size;
     self->buffer_count = 0;
     self->current_index = 0;
     if (buffer_size < MAP_CALIBRATION_MIN_COUNT) {
@@ -39,7 +34,6 @@ void map_calibration_reset(map_calibration_t *self) {
     self->rotation = 0;
     self->sensor_center = (float32_2_t) {0, 0};
     self->world_center = (float32_2_t) {0, 0};
-    self->buffer_size = 0;
     self->buffer_count = 0;
     self->current_index = 0;
 }
