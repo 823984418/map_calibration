@@ -11,6 +11,14 @@
 #include <msp430.h>
 #endif
 
+/// 编码器圆周计数
+#define CIRCLE          1440
+
+/// 编码器坐标转换系数
+#define POSITION_TO_MM  2.67405e-10f
+
+# define PI_2_FLOAT32 (2 * 3.14159265358979323846f)
+
 int32_t left_encoder;
 int32_t right_encoder;
 
@@ -19,8 +27,6 @@ int64_t encoder_y;
 
 extern const int32_t sinz[CIRCLE];
 extern const int32_t cosz[CIRCLE];
-
-# define PI_2_FLOAT32 (2 * 3.14159265358979323846f)
 
 void encoder_sensor_init(void) {
     left_encoder = 0;
