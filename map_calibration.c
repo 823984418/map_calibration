@@ -30,12 +30,16 @@ void map_calibration_uninit(map_calibration_t *self) {
     free(self->buffer);
 }
 
-void map_calibration_reset(map_calibration_t *self) {
+void map_calibration_reset(map_calibration_t *self, float32_2_t sensor_coord, float32_2_t world_coord, float32_t rotation) {
     self->rotation = 0;
     self->sensor_center = (float32_2_t) {0, 0};
     self->world_center = (float32_2_t) {0, 0};
     self->buffer_count = 0;
     self->current_index = 0;
+    self->sensor_center = sensor_coord;
+    self->world_center = world_coord;
+    self->rotation = rotation;
+    map_calibration_point(self, sensor_coord, world_coord);
 }
 
 void map_calibration_transform(map_calibration_t *self, float32_2_t sensor_coord, float32_2_t *world_coord) {
@@ -116,6 +120,6 @@ bool map_calibration_point_from_sensor_and_map(map_calibration_t *self, const ne
     if (map->get_nearest(map, test, &world_relative)) {
         return true;
     }
-    map_calibration_point(self, test, world_relative);
+    map_calibration_point(self, sensor_coord, world_relative);
     return false;
 }

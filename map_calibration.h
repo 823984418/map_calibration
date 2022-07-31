@@ -55,7 +55,10 @@ void map_calibration_uninit(map_calibration_t *self);
 /// 复位地图校正对象，这将会清空当前的所有采样点
 ///
 /// \param self         地图校正对象
-void map_calibration_reset(map_calibration_t *self);
+/// \param sensor_coord 传感器默认位置
+/// \param world_coord  地图默认位置
+/// \param rotation     默认旋转角度
+void map_calibration_reset(map_calibration_t *self, float32_2_t sensor_coord, float32_2_t world_coord, float32_t rotation);
 
 /// 利用地图校正对象完成坐标变换
 ///
