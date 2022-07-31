@@ -76,22 +76,30 @@ void map_calibration_point(map_calibration_t *self, float32_2_t sensor_coord, fl
         world_sum.x += map_point->world_coord.x;
         world_sum.y += map_point->world_coord.y;
     }
-    self->sensor_center = (float32_2_t) {sensor_sum.x * inv_count, sensor_sum.y * inv_count};
-    self->world_center = (float32_2_t) {world_sum.x * inv_count, world_sum.y * inv_count};
+    float32_2_t sensor_center = (float32_2_t) {sensor_sum.x * inv_count, sensor_sum.y * inv_count};
+    float32_2_t world_center = (float32_2_t) {world_sum.x * inv_count, world_sum.y * inv_count};
+    self->sensor_center = sensor_center;
+    self->world_center = world_center;
 
     if (count >= MAP_CALIBRATION_MIN_COUNT) {
         float32_t rotation_sum = 0;
         float32_t power_sum = 0;
         for (size_t i = 0; i < count; i++) {
             const map_calibration_point_t *map_point = &buffer[(index + i + size - count) % size];
-            float32_2_t map_sensor_coord = map_point->sensor_coord;
-            float32_2_t map_world_coord = map_point->world_coord;
-            float32_t power_sensor = sqrtf(map_sensor_coord.x * map_sensor_coord.x + map_sensor_coord.y * map_sensor_coord.y);
-            float32_t power_world = sqrtf(map_sensor_coord.x * map_sensor_coord.x + map_sensor_coord.y * map_sensor_coord.y);
+            float32_2_t sensor_center_coord = (float32_2_t) {
+                map_point->sensor_coord.x - sensor_center.x,
+                map_point->sensor_coord.y - sensor_center.y,
+            };
+            float32_2_t world_center_coord = (float32_2_t) {
+                map_point->world_coord.x - world_center.x,
+                map_point->world_coord.y - world_center.y,
+            };
+            float32_t power_sensor = sqrtf(sensor_center_coord.x * sensor_center_coord.x + sensor_center_coord.y * sensor_center_coord.y);
+            float32_t power_world = sqrtf(world_center_coord.x * world_center_coord.x + world_center_coord.y * world_center_coord.y);
             float32_t power = min(power_sensor, power_world);
             power_sum += power;
-            float32_t sensor_angle = atan2f(map_sensor_coord.y, map_sensor_coord.x);
-            float32_t world_angle = atan2f(map_world_coord.y, map_world_coord.x);
+            float32_t sensor_angle = atan2f(sensor_center_coord.y, sensor_center_coord.x);
+            float32_t world_angle = atan2f(world_center_coord.y, world_center_coord.x);
             float32_t delta_rotation = world_angle - sensor_angle - rotation_sum;
             delta_rotation -= roundf(delta_rotation / PI_2_FLOAT32) * PI_2_FLOAT32;
             rotation_sum += delta_rotation * power;
